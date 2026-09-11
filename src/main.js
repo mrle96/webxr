@@ -181,6 +181,7 @@ scene.add(reticle);
 renderer.xr.addEventListener("sessionstart", async () => {
   const session = renderer.xr.getSession();
   referenceSpace = renderer.xr.getReferenceSpace();
+
   const viewerSpace = await session.requestReferenceSpace("viewer");
   hitTestSource = await session.requestHitTestSource({ space: viewerSpace });
   hitTestSourceRequested = true;
@@ -236,11 +237,10 @@ scene.add(controller);
 renderer.setAnimationLoop((timestamp, frame) => {
   if (frame && hitTestSource) {
     const hitTestResults = frame.getHitTestResults(hitTestSource);
-    totalLength.innerHTML=pose
     if (hitTestResults.length > 0) {
       const hit = hitTestResults[0];
-      const pose = hit.getPose(referenceSpace);
-
+        const pose = hit.getPose(referenceSpace);
+        totalLength.innerHTML=pose
       reticle.visible = true;
       reticle.matrix.fromArray(pose.transform.matrix);
     } else {
