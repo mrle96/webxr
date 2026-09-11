@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 import { ARButton } from "three/addons/webxr/ARButton.js";
-
+import { XRButton } from 'three/addons/webxr/XRButton.js';
 
 /// HTML UI tagovi
 const overlayDisplay = document.querySelector("#ar-overlay");
@@ -158,7 +158,7 @@ body.appendChild(renderer.domElement);
 body.appendChild(
   ARButton.createButton(renderer, {
     requiredFeatures: ["hit-test"],
-    optionalFeatures: ["dom-overlay"],
+    optionalFeatures: ["dom-overlay","plane-detection"],
     domOverlay: { root: document.querySelector("#ar-overlay") },
   }),
 );
