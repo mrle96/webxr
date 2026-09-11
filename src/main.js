@@ -236,7 +236,6 @@ scene.add(controller);
 renderer.setAnimationLoop((timestamp, frame) => {
   if (frame && hitTestSource) {
     const hitTestResults = frame.getHitTestResults(hitTestSource);
-    const pose = hit.getPose(referenceSpace);
     totalLength.innerHTML=pose
     if (hitTestResults.length > 0) {
       const hit = hitTestResults[0];
