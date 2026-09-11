@@ -193,7 +193,7 @@ renderer.xr.addEventListener("sessionstart", async () => {
 // Funkcija selekt - Kada korisnik klikne na prostor definisu se segmenti i tacke
 function onSelect() {
   if (reticle.visible) {
-    clicked++;
+  
     const point = new THREE.Vector3();
     point.name = clicked;
     point.setFromMatrixPosition(reticle.matrix);
@@ -236,7 +236,8 @@ scene.add(controller);
 renderer.setAnimationLoop((timestamp, frame) => {
   if (frame && hitTestSource) {
     const hitTestResults = frame.getHitTestResults(hitTestSource);
-
+    const pose = hit.getPose(referenceSpace);
+    totalLength.innerHTML=pose
     if (hitTestResults.length > 0) {
       const hit = hitTestResults[0];
       const pose = hit.getPose(referenceSpace);
