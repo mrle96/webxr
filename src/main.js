@@ -19,7 +19,7 @@ let points = [];
 let isNewMesurment = false;
 let typeOfPlane = null;
 
-// Osnovna Three 3D scene Kamera i Scena
+// Osnovna Three 3D scene Kamera i Scene
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   70,
