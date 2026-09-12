@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 import { ARButton } from "three/addons/webxr/ARButton.js";
-import { XRButton } from "three/addons/webxr/XRButton.js";
+
 
 /// HTML UI tagovi
 const overlayDisplay = document.querySelector("#ar-overlay");
@@ -11,15 +11,14 @@ const arContainer = document.querySelector("#ar-container");
 const body = document.querySelector("body");
 const closeArea = document.querySelector("#close-poly-btn");
 const totalArea = document.querySelector("#total-area");
-const _typeOfPlane = document.querySelector("#typeOfPlane");
+
 
 // Varijable
 let clicked = 0;
 let points = [];
 let isNewMesurment = false;
-let typeOfPlane = null;
 
-// Osnovna Three 3D scene Kamera i Scene
+// Osnovna Three 3D scene Kamera i Scena
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   70,
@@ -60,20 +59,6 @@ resetBtn.addEventListener("beforexrselect", (e) => {
   e.preventDefault();
 });
 
-function _getArea(typeOfPlane, points) {
-  if (typeOfPlane == "horizontal") {
-    const d2Vectors = points.map(
-      (point) => new THREE.Vector2(point.x, point.z),
-    );
-    return Math.abs(THREE.ShapeUtils.area(d2Vectors)).toFixed(2)
-  } else (typeOfPlane == "vertical"){
-    const d2Vectors = points.map(
-      (point) => new THREE.Vector2(point.y, point.z),
-    );
-    return Math.abs(THREE.ShapeUtils.area(d2Vectors)).toFixed(2)
-  }
-
-}
 
 closeArea.addEventListener("click", () => {
   // Ako imamo minimum br tacaka za poligon mozemo povrsinu da izracunamo
@@ -96,8 +81,8 @@ closeArea.addEventListener("click", () => {
       (point) => new THREE.Vector2(point.x, point.z),
     );
     // Ispis povrsine u HTML tag
-    totalArea.textContent = `Povrsina: ${_getArea(typeOfPlane, points)} m2`;
-
+    totalArea.textContent = `Povrsina: ${Math.abs(THREE.ShapeUtils.area(d2Vectors)).toFixed(2)} m2`;
+    
     const textSprite = createTextSprite(`${d.toFixed(2)} m`);
     textSprite.position.copy(midlePoint);
     scene.add(textSprite);
@@ -173,7 +158,7 @@ body.appendChild(renderer.domElement);
 body.appendChild(
   ARButton.createButton(renderer, {
     requiredFeatures: ["hit-test"],
-    optionalFeatures: ["dom-overlay", "plane-detection"],
+   optionalFeatures: ["dom-overlay", "plane-detection"],
     domOverlay: { root: document.querySelector("#ar-overlay") },
   }),
 );
@@ -186,7 +171,7 @@ const reticleGeometry = new THREE.CircleGeometry(0.01, 32);
 const reticleMaterial = new THREE.MeshBasicMaterial({
   color: new THREE.Color("#DEFFF2"),
 });
-// Krug indikator
+// Krug indikator 
 const reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
 reticle.name = "reticle";
 reticle.matrixAutoUpdate = false;
@@ -196,7 +181,6 @@ scene.add(reticle);
 renderer.xr.addEventListener("sessionstart", async () => {
   const session = renderer.xr.getSession();
   referenceSpace = renderer.xr.getReferenceSpace();
-
   const viewerSpace = await session.requestReferenceSpace("viewer");
   hitTestSource = await session.requestHitTestSource({ space: viewerSpace });
   hitTestSourceRequested = true;
@@ -209,6 +193,7 @@ renderer.xr.addEventListener("sessionstart", async () => {
 // Funkcija selekt - Kada korisnik klikne na prostor definisu se segmenti i tacke
 function onSelect() {
   if (reticle.visible) {
+    clicked++;
     const point = new THREE.Vector3();
     point.name = clicked;
     point.setFromMatrixPosition(reticle.matrix);
@@ -258,15 +243,6 @@ renderer.setAnimationLoop((timestamp, frame) => {
 
       reticle.visible = true;
       reticle.matrix.fromArray(pose.transform.matrix);
-
-      if (frame.detectedPlanes) {
-        for (const plane of frame.detectedPlanes) {
-          // plane.orientation je "horizontal", "vertical" ili null
-
-          typeOfPlane = plane.orientation;
-          _typeOfPlane.innerHTML = `Orijentacija:${typeOfPlane}`;
-        }
-      }
     } else {
       reticle.visible = false;
     }
